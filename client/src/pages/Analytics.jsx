@@ -1,204 +1,237 @@
 import React from 'react';
-import GlassCard from '../components/GlassCard';
-import { TrendingUp, Clock, Target, AlertCircle, BarChart, Download, Calendar, Sparkles, ArrowRight, BookOpen, CheckCircle } from 'lucide-react';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+    AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
+} from 'recharts';
+import {
+    Download, Calendar, Filter, Target, Zap, Brain, Rocket,
+    ArrowRight, Globe, TrendingUp, Award, Clock
+} from 'lucide-react';
 import { motion } from 'framer-motion';
-import useAIStore from '../store/useAIStore';
 
 const Analytics = () => {
-    const [isProcessing, setIsProcessing] = React.useState(null);
     const skillData = [
-        { subject: 'React Architecture', progress: 85, color: 'bg-primary-600' },
-        { subject: 'Node.js Systems', progress: 60, color: 'bg-primary-400' },
-        { subject: 'Database Design', progress: 45, color: 'bg-slate-300' },
-        { subject: 'AI Integration', progress: 70, color: 'bg-accent' },
-        { subject: 'UI/UX Design', progress: 90, color: 'bg-primary-600' },
+        { subject: 'Architecture', A: 120, B: 110, fullMark: 150 },
+        { subject: 'Logic', A: 98, B: 130, fullMark: 150 },
+        { subject: 'Data Flow', A: 86, B: 130, fullMark: 150 },
+        { subject: 'UI Systems', A: 99, B: 100, fullMark: 150 },
+        { subject: 'AI Design', A: 85, B: 90, fullMark: 150 },
+        { subject: 'Deployment', A: 65, B: 85, fullMark: 150 },
     ];
 
-    const masteredTopics = [
-        { topic: 'Redux Sagas', status: 'Perfect score in recent quiz' },
-        { topic: 'Mongoose Middleware', status: 'Optimal module completion' },
-        { topic: 'LangChain Memory', status: 'Core concepts verified' },
+    const marketData = [
+        { name: 'Jan', value: 400 },
+        { name: 'Feb', value: 300 },
+        { name: 'Mar', value: 600 },
+        { name: 'Apr', value: 800 },
+        { name: 'May', value: 500 },
+        { name: 'Jun', value: 900 },
     ];
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-12 max-w-7xl mx-auto px-4 py-8 font-inter pb-20"
         >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                    <h2 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                        Performance <span className="text-primary-600">Insights</span> <BarChart className="text-accent" />
-                    </h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">Deep dive into your learning patterns and growth metrics.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-xs uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-50 transition-all">
-                        <Calendar size={18} /> Last 7 Days
-                    </button>
-                    <button
-                        onClick={() => {
-                            setIsProcessing('report');
-                            setTimeout(() => {
-                                setIsProcessing(null);
-                                // Quietly update context for when user chooses to open AI
-                                useAIStore.getState().setActiveLesson({ title: 'Performance Report', aiInfo: 'Analysis of recent learning trends and efficiency metrics.' });
-                            }, 1500);
-                        }}
-                        disabled={isProcessing === 'report'}
-                        className="btn-accent gap-2 !px-8 relative overflow-hidden"
+            {/* Header section */}
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-slate-100 pb-16">
+                <div className="space-y-4">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-primary border border-primary/10"
                     >
-                        {isProcessing === 'report' ? (
-                            <>
-                                <div className="absolute inset-0 bg-primary-600 flex items-center justify-center">
-                                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-                                </div>
-                                <span className="opacity-0">Export report</span>
-                            </>
-                        ) : (
-                            <>
-                                <Download size={18} /> Export report
-                            </>
-                        )}
+                        <Zap size={14} fill="currentColor" /> Live Performance Stream
+                    </motion.div>
+                    <h1 className="text-6xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+                        Cognitive <span className="text-gradient-ai">Vault</span>
+                    </h1>
+                    <p className="text-lg text-slate-500 font-bold max-w-lg">Deep-cycle analysis of your learning nodes, retention velocities, and market alignment vectors.</p>
+                </div>
+                <div className="flex gap-4">
+                    <button className="h-16 px-8 bg-white border-2 border-slate-50 rounded-[1.8rem] flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:border-slate-200 transition-all shadow-sm">
+                        <Calendar size={18} /> Cycle View
+                    </button>
+                    <button className="h-16 px-8 bg-slate-900 border-none rounded-[1.8rem] flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white hover:bg-primary transition-all shadow-2xl shadow-slate-900/20">
+                        <Download size={18} /> Export Data
                     </button>
                 </div>
-            </div>
+            </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Skill Graph */}
-                <div className="lg:col-span-2 pro-card p-8 bg-white dark:bg-slate-900 shadow-xl shadow-primary-900/5">
-                    <div className="flex justify-between items-center mb-8">
-                        <h3 className="text-xl font-black flex items-center gap-3">
-                            Skill Mastery Analysis
-                        </h3>
-                        <span className="text-[10px] font-black bg-primary-50 text-primary-600 px-3 py-1 rounded-full uppercase tracking-widest">Active session</span>
-                    </div>
-                    <div className="space-y-6">
-                        {skillData.map((skill, index) => (
-                            <div key={index} className="space-y-2">
-                                <div className="flex justify-between items-end">
-                                    <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">{skill.subject}</span>
-                                    <span className="text-primary-600 font-black text-sm">{skill.progress}%</span>
-                                </div>
-                                <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${skill.progress}%` }}
-                                        transition={{ duration: 1, delay: index * 0.1 }}
-                                        className={`h-full ${skill.color} rounded-full`}
-                                    />
-                                </div>
+            {/* Main grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                {/* Skill Mastery (Radar Chart) */}
+                <div className="lg:col-span-2 pro-card !p-12 !rounded-[4.5rem] space-y-12">
+                    <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                            <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Skill Multi-Vector</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cross-domain proficiency mapping</p>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">You</span>
                             </div>
-                        ))}
+                            <div className="flex items-center gap-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-secondary" />
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Avg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-[450px] w-full mt-8">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={skillData}>
+                                <PolarGrid stroke="#f1f5f9" />
+                                <PolarAngleAxis
+                                    dataKey="subject"
+                                    tick={{ fill: '#64748b', fontSize: 10, fontWeight: 900, textTransform: 'uppercase' }}
+                                />
+                                <PolarRadiusAxis hide />
+                                <Radar
+                                    name="Actual"
+                                    dataKey="A"
+                                    stroke="#6C63FF"
+                                    strokeWidth={3}
+                                    fill="#6C63FF"
+                                    fillOpacity={0.15}
+                                />
+                                <Radar
+                                    name="Benchmark"
+                                    dataKey="B"
+                                    stroke="#0EA5E9"
+                                    strokeWidth={2}
+                                    fill="#0EA5E9"
+                                    fillOpacity={0.05}
+                                    strokeDasharray="5 5"
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        borderRadius: '24px',
+                                        border: 'none',
+                                        boxShadow: '0 32px 64px -16px rgba(0,0,0,0.15)',
+                                        padding: '24px',
+                                        background: '#fff'
+                                    }}
+                                    itemStyle={{ fontFamily: 'Inter', fontWeight: 900, fontSize: '11px', textTransform: 'uppercase' }}
+                                />
+                            </RadarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
                 {/* Focus Stats */}
-                <div className="space-y-6">
-                    <div className="pro-card p-8 bg-primary-600 text-white relative overflow-hidden group">
-                        <Sparkles className="absolute -top-6 -right-6 text-white/10" size={120} />
-                        <Clock className="mb-4 text-accent" size={32} />
-                        <h4 className="text-4xl font-black mb-1 tracking-tight">24.5h</h4>
-                        <p className="text-primary-50 text-sm font-bold opacity-80">Focus study time this week</p>
-                        <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase bg-white/20 px-3 py-1.5 rounded-xl w-fit">
-                            <TrendingUp size={14} className="text-accent" /> +12% Efficiency
+                <div className="space-y-12">
+                    <div className="pro-card !p-12 !rounded-[4.5rem] bg-gradient-to-br from-primary to-secondary text-white border-none relative overflow-hidden group shadow-[0_40px_80px_-20px_rgba(108,99,255,0.3)]">
+                        <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-125 transition-transform duration-[2s]">
+                            <Target size={180} />
+                        </div>
+                        <h3 className="text-2xl font-black uppercase tracking-tighter mb-10 flex items-center gap-4 relative z-10">
+                            <Rocket size={24} /> Focus Velocity
+                        </h3>
+                        <div className="space-y-12 relative z-10">
+                            <div>
+                                <div className="flex justify-between items-end mb-4">
+                                    <span className="text-4xl font-black tracking-tighter">92%</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-70">Deep Work Sync</span>
+                                </div>
+                                <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+                                    <motion.div initial={{ width: 0 }} animate={{ width: '92%' }} className="h-full bg-white" transition={{ duration: 1.5 }} />
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between items-end mb-4">
+                                    <span className="text-4xl font-black tracking-tighter">18h</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-70">Weekly Peak</span>
+                                </div>
+                                <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+                                    <motion.div initial={{ width: 0 }} animate={{ width: '65%' }} className="h-full bg-white" transition={{ duration: 1.5, delay: 0.2 }} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="pro-card p-8">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 rounded-xl bg-accent/20 text-primary-900">
-                                <Target size={24} />
+                    <div className="pro-card !p-12 !rounded-[4.5rem] bg-slate-50 border-slate-100 flex flex-col justify-center gap-10 group">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-[1.8rem] bg-white shadow-premium-md flex items-center justify-center text-primary border-2 border-white group-hover:rotate-12 transition-transform">
+                                <Award size={32} />
                             </div>
-                            <h4 className="text-lg font-black">Daily Goal</h4>
+                            <div>
+                                <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Top 3% Globally</h4>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">In Logic Synthesis</p>
+                            </div>
                         </div>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Today</span>
-                                <span className="text-lg font-black text-primary-600">2 <span className="text-slate-300">/</span> 3h</span>
-                            </div>
-                            <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: '66%' }}
-                                    transition={{ duration: 1 }}
-                                    className="h-full bg-accent rounded-full"
-                                />
-                            </div>
-                            <p className="text-[11px] text-slate-500 font-medium text-center italic">
-                                "You're almost there! 45 more minutes to win a badge."
-                            </p>
-                        </div>
+                        <p className="text-sm font-bold text-slate-600 leading-relaxed border-l-4 border-primary pl-6 py-2">
+                            Your retention velocity has increased by 15% following the last 3 research micro-cycles.
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Mastered Topics */}
-                <div className="pro-card p-8 border-none bg-emerald-50/50 dark:bg-emerald-950/20">
-                    <h3 className="text-xl font-black flex items-center gap-3 mb-6">
-                        <CheckCircle className="text-emerald-500" size={24} /> Learning Achievements
-                    </h3>
-                    <div className="space-y-4">
-                        {masteredTopics.map((topic, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ x: 4 }}
-                                className="flex gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm group"
-                            >
-                                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 self-start group-hover:scale-110 transition-transform">
-                                    <CheckCircle size={20} />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors uppercase tracking-tight text-sm">{topic.topic}</p>
-                                    <p className="text-[11px] text-slate-500 font-medium mt-1">{topic.status}</p>
-                                    <button className="mt-3 flex items-center gap-2 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-widest hover:underline group/link">
-                                        View Details <ArrowRight size={12} className="group-hover/link:translate-x-1 transition-transform" />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
+            {/* Market Alignment Area Chart */}
+            <div className="pro-card !p-16 !rounded-[5rem] relative overflow-hidden group">
+                <div className="absolute bottom-0 right-0 w-1/3 h-1/2 bg-primary/5 blur-[100px] rounded-full translate-x-1/2 translate-y-1/2 -z-10" />
+
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 relative z-10">
+                    <div className="space-y-3">
+                        <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-secondary/5 rounded-full text-[10px] font-black text-secondary uppercase tracking-[0.3em] border border-secondary/10">
+                            <Globe size={14} className="animate-pulse" /> Industry Vectors
+                        </div>
+                        <h3 className="text-5xl font-black text-slate-900 uppercase tracking-tighter leading-none">Market Synergy</h3>
+                        <p className="text-lg text-slate-500 font-bold">Alignment with High-Frequency Tech Demands</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-1">
+                            <p className="text-[32px] font-black text-slate-900 tracking-tighter leading-none">8.4k</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Global Node Matches</p>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-[32px] font-black text-primary tracking-tighter leading-none">+22%</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Alpha-Trajectory</p>
+                        </div>
                     </div>
                 </div>
 
-                {/* AI Adaptive Recommendations */}
-                <div className="pro-card p-8 border-none bg-primary-50/50 dark:bg-primary-950/20">
-                    <h3 className="text-xl font-black flex items-center gap-3 mb-6">
-                        <Sparkles className="text-primary-600" size={24} /> Learning Growth
-                    </h3>
-                    <div className="space-y-6">
-                        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-primary-100 dark:border-primary-900 shadow-sm hover:shadow-md transition-all">
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary-600 mb-2 block">Optimal next step</span>
-                            <p className="font-bold text-lg mb-2">Build a micro-project</p>
-                            <p className="text-xs text-slate-500 font-medium mb-5 leading-relaxed">Applying React performance concepts in a real task will boost your mastery by 15%.</p>
-                            <button
-                                onClick={() => {
-                                    setIsProcessing('project');
-                                    setTimeout(() => {
-                                        setIsProcessing(null);
-                                        // Quietly update context
-                                        useAIStore.getState().setActiveLesson({ title: 'New Micro-Project', aiInfo: 'Plan for building a React performance prototype.' });
-                                    }, 1500);
+                <div className="h-[300px] w-full relative z-10">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={marketData}>
+                            <defs>
+                                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#6C63FF" stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor="#6C63FF" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                            <XAxis
+                                dataKey="name"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 900, textTransform: 'uppercase' }}
+                                dy={15}
+                            />
+                            <YAxis hide />
+                            <Tooltip
+                                contentStyle={{
+                                    borderRadius: '20px',
+                                    border: 'none',
+                                    boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+                                    padding: '20px',
+                                    background: '#fff'
                                 }}
-                                disabled={isProcessing === 'project'}
-                                className="btn-primary w-full py-3 text-[10px] uppercase tracking-widest relative"
-                            >
-                                {isProcessing === 'project' ? "AI Planning project..." : "Start project"}
-                            </button>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20">
-                                <p className="font-black text-primary-900 text-[9px] uppercase tracking-widest mb-1">Peak focus</p>
-                                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">10:00 AM - 1:00 PM</p>
-                            </div>
-                            <div className="p-4 rounded-2xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
-                                <p className="font-black text-primary-600 text-[9px] uppercase tracking-widest mb-1">Peers Active</p>
-                                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">12 Friends Online</p>
-                            </div>
-                        </div>
-                    </div>
+                                itemStyle={{ fontFamily: 'Inter', fontWeight: 900, fontSize: '11px', textTransform: 'uppercase' }}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="value"
+                                stroke="#6C63FF"
+                                strokeWidth={4}
+                                fillOpacity={1}
+                                fill="url(#colorValue)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </motion.div>

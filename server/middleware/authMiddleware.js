@@ -14,8 +14,11 @@ exports.protect = async (req, res, next) => {
     }
 
     // Make sure token exists
-    if (!token) {
-        return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
+    if (!token || token === 'null' || token === 'undefined') {
+        return res.status(401).json({
+            success: false,
+            error: 'Not authorized to access this route: No token provided'
+        });
     }
 
     try {
@@ -24,8 +27,19 @@ exports.protect = async (req, res, next) => {
 
         req.user = await User.findById(decoded.id);
 
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                error: 'Not authorized to access this route: User not found'
+            });
+        }
+
         next();
     } catch (err) {
-        return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
+        console.error('JWT Verification Error:', err.message);
+        return res.status(401).json({
+            success: false,
+            error: `Not authorized to access this route: ${err.message}`
+        });
     }
 };

@@ -1,33 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Home, BookOpen, Brain, BarChart2, User, LogOut, Menu, X, Bell, Search, Settings, FlaskConical, Maximize2, Minimize2, ChevronDown } from 'lucide-react';
+import {
+    Home, BookOpen, Brain, BarChart2, User, LogOut, Menu, X, Bell,
+    Search, Settings, FlaskConical, Maximize2, Minimize2, ChevronDown,
+    Clock, Sparkles, Target, Edit3
+} from 'lucide-react';
 import AIAssistant from './components/AIAssistant';
 import useAuthStore from './store/useAuthStore';
-import useAIStore from './store/useAIStore';
 import { useTheme } from './context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-// logo check: src/assets/logo.png
-const logo = '/src/assets/logo.png';
 
 const MainLayout = ({ children, activePage, setActivePage }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const userMenuRef = useRef(null);
-    const { logout } = useAuthStore();
-    const { theme, toggleTheme } = useTheme();
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const { logout, user } = useAuthStore();
 
-    // Handle outside clicks for dropdown
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-                setIsUserMenuOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    const menuItems = [
+        { id: 'dashboard', icon: Home, label: 'Dashboard' },
+        { id: 'courses', icon: BookOpen, label: 'My Courses' },
+        { id: 'mentors', icon: Brain, label: 'AI Mentors' },
+        { id: 'lab', icon: FlaskConical, label: 'Practice Lab' },
+        { id: 'performance', icon: BarChart2, label: 'Performance' },
+        { id: 'roadmap', icon: Target, label: 'Learning Roadmap' },
+        { id: 'profile', icon: User, label: 'My Profile' },
+        { id: 'settings', icon: Settings, label: 'Settings' },
+    ];
 
-    const toggleFullScreen = () => {
+    const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
             setIsFullscreen(true);
@@ -39,194 +38,185 @@ const MainLayout = ({ children, activePage, setActivePage }) => {
         }
     };
 
-    const menuItems = [
-        { id: 'dashboard', icon: Home, label: 'Dashboard' },
-        { id: 'courses', icon: BookOpen, label: 'My Courses' },
-        { id: 'agents', icon: Brain, label: 'AI Mentors' },
-        { id: 'lab', icon: FlaskConical, label: 'Practice Lab' },
-        { id: 'analytics', icon: BarChart2, label: 'Performance' },
-        { id: 'profile', icon: User, label: 'My Profile' },
-    ];
-
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 flex overflow-hidden">
-            <div className="premium-bg" />
-
-            {/* Mobile Menu Toggle */}
-            <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="md:hidden fixed top-6 left-6 z-50 p-3 bg-white dark:bg-slate-900 shadow-xl rounded-2xl border border-slate-200 dark:border-slate-800"
-            >
-                {isSidebarOpen ? <X size={20} className="text-primary-600" /> : <Menu size={20} className="text-primary-600" />}
-            </motion.button>
-
+        <div className="min-h-screen bg-[var(--color-bg-base)] flex text-[var(--color-text-main)] font-sans">
             {/* Sidebar */}
-            <AnimatePresence>
-                {(isSidebarOpen || true) && (
-                    <motion.div
-                        initial={false}
-                        animate={{ x: 0 }}
-                        className={`
-                            fixed md:relative w-72 h-screen z-40
-                            bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800
-                            transition-all duration-500 transform
-                            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-                            flex flex-col p-6 overflow-hidden
-                        `}
-                    >
-                        <div className="flex items-center gap-3 mb-10 px-2">
-                            <img src={logo} alt="EduGenie Logo" className="w-12 h-12 object-contain" />
-                            <span className="text-2xl font-black tracking-tight text-primary-600 dark:text-white">EduGenie</span>
+            <aside className={`
+                fixed inset-y-0 left-0 z-50 w-80 bg-white/70 backdrop-blur-2xl border-r border-slate-100/50
+                transition-all duration-500 ease-in-out lg:translate-x-0 lg:static
+                ${isSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:shadow-none'}
+            `}>
+                <div className="h-full flex flex-col p-8">
+                    <div className="flex items-center gap-4 mb-12 px-2 group cursor-pointer">
+                        <motion.div
+                            whileHover={{ rotate: 180 }}
+                            transition={{ duration: 0.7 }}
+                            className="w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-primary/25"
+                        >
+                            <Brain size={28} strokeWidth={2.5} />
+                        </motion.div>
+                        <div className="flex flex-col">
+                            <span className="text-2xl font-black tracking-tighter text-slate-900 leading-none">EduGenie</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-1">Academix OS</span>
                         </div>
+                    </div>
 
-                        <nav className="flex-1 space-y-2">
-                            {menuItems.map((item) => (
-                                <motion.button
+                    <nav className="flex-1 space-y-2">
+                        {menuItems.map((item) => {
+                            const isActive = activePage === item.id;
+                            return (
+                                <button
                                     key={item.id}
-                                    whileHover={{ x: 4 }}
-                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => {
                                         setActivePage(item.id);
                                         setIsSidebarOpen(false);
                                     }}
-                                    className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 relative group ${activePage === item.id
-                                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold'
-                                        : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400'
-                                        }`}
+                                    className={`
+                                        w-full group relative flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300
+                                        ${isActive
+                                            ? 'bg-white text-primary shadow-[0_20px_40px_-12px_rgba(108,99,255,0.12)] ring-1 ring-primary/5'
+                                            : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'}
+                                    `}
                                 >
-                                    {activePage === item.id && (
+                                    <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} className="transition-transform group-hover:scale-110" />
+                                    <span className={`text-sm font-bold tracking-tight ${isActive ? 'text-slate-900' : ''}`}>{item.label}</span>
+                                    {isActive && (
                                         <motion.div
-                                            layoutId="activeTab"
-                                            className="absolute left-0 w-1.5 h-8 bg-primary-600 rounded-r-full"
-                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                            layoutId="nav-active"
+                                            className="absolute left-0 w-1.5 h-6 bg-primary rounded-r-full"
+                                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                                         />
                                     )}
-                                    <item.icon size={22} strokeWidth={activePage === item.id ? 2.5 : 2} className={activePage === item.id ? 'text-primary-600' : 'text-slate-400 group-hover:text-primary-500'} />
-                                    <span className={`tracking-tight ${activePage === item.id ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
-                                        {item.label}
-                                    </span>
-                                </motion.button>
-                            ))}
-                        </nav>
+                                </button>
+                            );
+                        })}
+                    </nav>
 
-                        <div className="mt-8 p-6 rounded-3xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                            <div className="flex justify-between items-end mb-3">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Level 12</span>
-                                <span className="text-xs font-black text-primary-600">85%</span>
+                    <div className="pt-8 space-y-6">
+                        <div className="pro-card !p-5 !rounded-3xl bg-slate-50/50 border-slate-100 flex items-center gap-4 group cursor-pointer hover:bg-white transition-colors">
+                            <div className="w-12 h-12 rounded-2xl bg-white overflow-hidden border-2 border-white shadow-md flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform">
+                                {user?.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : <User size={24} />}
                             </div>
-                            <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: '85%' }}
-                                    className="h-full bg-primary-600 rounded-full"
-                                />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-black truncate text-slate-900">{user?.name || 'Student'}</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-success animate-pulse-soft"></div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Neural Link Active</p>
+                                </div>
                             </div>
-                            <p className="text-[9px] font-bold text-slate-500 mt-2 text-center uppercase tracking-tighter">150 XP to Neural Architect</p>
                         </div>
+                        <button
+                            onClick={logout}
+                            className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-rose-500 font-black hover:bg-rose-50 transition-all uppercase text-[10px] tracking-[0.2em] group"
+                        >
+                            <LogOut size={20} strokeWidth={2.5} className="group-hover:-translate-x-1 transition-transform" />
+                            Disconnect session
+                        </button>
+                    </div>
+                </div>
+            </aside>
 
-                        <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                            <button
-                                onClick={logout}
-                                className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all font-semibold"
-                            >
-                                <LogOut size={22} />
-                                <span>Logout</span>
-                            </button>
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col h-screen overflow-hidden">
+                {/* Top Nav */}
+                <header className="h-24 bg-white/50 backdrop-blur-xl border-b border-slate-100/50 flex items-center justify-between px-10 sticky top-0 z-40">
+                    <div className="flex items-center gap-8 flex-1">
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            className="lg:hidden p-3 hover:bg-slate-100 rounded-2xl text-slate-500 transition-colors"
+                        >
+                            <Menu size={22} />
+                        </motion.button>
+
+                        <div className="hidden md:flex items-center gap-4 px-6 h-14 bg-white border-2 border-slate-50 rounded-2xl w-full max-w-xl group focus-within:border-primary/20 focus-within:ring-4 focus-within:ring-primary/5 transition-all duration-300 shadow-sm">
+                            <Search size={20} className="text-slate-300 group-focus-within:text-primary transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Query neural nodes, curriculum..."
+                                className="bg-transparent border-none text-sm font-bold w-full focus:outline-none placeholder:text-slate-300"
+                            />
+                            <div className="flex items-center gap-1 px-2 py-1 bg-slate-50 rounded-md border border-slate-100 text-[9px] font-black text-slate-400 group-hover:border-primary/10 group-hover:text-primary transition-colors">
+                                CMD K
+                            </div>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-                <header className="flex justify-between items-center p-6 h-24 border-b border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md z-10">
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 dark:text-white capitalize leading-none">
-                            {activePage === 'dashboard' ? 'Learning Dashboard' : activePage}
-                        </h1>
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">
-                            Welcome Back, Student
-                        </p>
                     </div>
 
-                    <div className="flex gap-4 items-center">
-                        <div className="hidden sm:flex items-center gap-2 mr-2">
-                            <button
-                                onClick={toggleFullScreen}
-                                className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 transition-colors tooltip"
-                                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                            >
-                                {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                    <div className="flex items-center gap-6">
+                        <div className="hidden xl:flex items-center gap-6 pr-6 border-r border-slate-100">
+                            <div className="flex flex-col items-end">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Neural Load</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: '42%' }}
+                                            className="h-full bg-primary"
+                                        />
+                                    </div>
+                                    <span className="text-[10px] font-black text-slate-900">42%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button className="p-3 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-2xl transition-all relative group">
+                                <Bell size={22} />
+                                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-primary rounded-full border-2 border-white group-hover:scale-125 transition-transform"></span>
                             </button>
-                            <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 transition-colors">
-                                <Search size={20} />
-                            </button>
-                            <button className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 transition-colors relative">
-                                <Bell size={20} />
-                                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-accent rounded-full border-2 border-white dark:border-slate-900"></span>
-                            </button>
-                            <button
-                                onClick={toggleTheme}
-                                className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 transition-colors"
-                            >
-                                {theme === 'dark' ? <Settings size={20} /> : <Settings size={20} />}
+                            <button onClick={toggleFullscreen} className="p-3 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-2xl transition-all">
+                                {isFullscreen ? <Minimize2 size={22} /> : <Maximize2 size={22} />}
                             </button>
                         </div>
-                        <div className="w-px h-8 bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
 
-                        <div className="relative" ref={userMenuRef}>
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                className="flex items-center gap-3 p-1 pl-3 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800"
+                        <div className="relative">
+                            <div
+                                className="flex items-center gap-4 pl-4 group cursor-pointer hover:bg-slate-50 p-2 rounded-2xl transition-colors"
+                                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                             >
-                                <div className="hidden md:block text-right">
-                                    <p className="text-xs font-black text-slate-900 dark:text-white leading-none">Student User</p>
-                                    <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mt-0.5">Pro Member</p>
+                                <div className="relative">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-indigo-500 to-secondary p-[2px] shadow-lg shadow-primary/20">
+                                        <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center overflow-hidden">
+                                            {user?.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <User size={24} className="text-primary" />}
+                                        </div>
+                                    </div>
+                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success border-2 border-white rounded-full"></div>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-primary-900 font-black text-lg shadow-md shadow-accent/20 relative">
-                                    S
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                                <div className="hidden sm:block text-left">
+                                    <p className="text-sm font-black text-slate-900 leading-none mb-1">{user?.name || 'Neural Architect'}</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Lvl 12 (85%)</span>
+                                    </div>
                                 </div>
-                                <ChevronDown size={14} className={`text-slate-400 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
-                            </motion.div>
+                                <ChevronDown size={16} className={`text-slate-300 group-hover:text-primary transition-transform duration-300 ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+                            </div>
 
                             <AnimatePresence>
-                                {isUserMenuOpen && (
+                                {isProfileMenuOpen && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 mt-3 w-64 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 z-50 p-2"
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 top-full mt-4 w-60 bg-white/80 backdrop-blur-xl border border-white rounded-[2rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] overflow-hidden z-50 p-2"
                                     >
-                                        <div className="p-4 border-b border-slate-50 dark:border-slate-800 mb-2">
-                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Account</p>
-                                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">student@edugenie.ai</p>
+                                        <div className="p-4 border-b border-slate-100/50 mb-2">
+                                            <p className="text-sm font-black text-slate-900 truncate">{user?.name || 'Student'}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1 truncate">{user?.email}</p>
                                         </div>
-
-                                        <div className="space-y-1">
-                                            <button
-                                                onClick={() => { setActivePage('profile'); setIsUserMenuOpen(false); }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:text-primary-600 transition-all"
-                                            >
-                                                <User size={18} /> View Profile
+                                        <div className="flex flex-col gap-1">
+                                            <button onClick={() => { setActivePage('profile'); setIsProfileMenuOpen(false); }} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-slate-50 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-600 hover:text-primary transition-all">
+                                                <User size={16} /> View Profile
                                             </button>
-                                            <button
-                                                onClick={() => { setActivePage('profile'); setIsUserMenuOpen(false); }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:text-primary-600 transition-all"
-                                            >
-                                                <Settings size={18} /> Account Settings
+                                            <button onClick={() => { setActivePage('profile'); setIsProfileMenuOpen(false); }} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-slate-50 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-600 hover:text-primary transition-all">
+                                                <Edit3 size={16} /> Edit Profile
                                             </button>
-                                        </div>
-
-                                        <div className="mt-2 pt-2 border-t border-slate-50 dark:border-slate-800">
-                                            <button
-                                                onClick={() => { logout(); setIsUserMenuOpen(false); }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
-                                            >
-                                                <LogOut size={18} /> Logout
+                                            <button onClick={() => { setActivePage('settings'); setIsProfileMenuOpen(false); }} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-slate-50 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-600 hover:text-primary transition-all">
+                                                <Settings size={16} /> Settings
+                                            </button>
+                                            <div className="h-px w-full bg-slate-100/50 my-1"></div>
+                                            <button onClick={logout} className="flex items-center gap-3 w-full px-4 py-3 hover:bg-rose-50 rounded-2xl text-xs font-black uppercase tracking-widest text-rose-500 transition-all">
+                                                <LogOut size={16} /> Disconnect
                                             </button>
                                         </div>
                                     </motion.div>
@@ -236,26 +226,22 @@ const MainLayout = ({ children, activePage, setActivePage }) => {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-6 md:p-10 pb-24">
-                    <div className="max-w-7xl mx-auto">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activePage}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3, ease: 'easeOut' }}
-                            >
-                                {children}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </main>
-            </div>
+                <div className="flex-1 overflow-y-auto bg-[var(--color-bg-subtle)] p-8">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activePage}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                        >
+                            {children}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            </main>
 
-            <div className="fixed bottom-8 right-8 z-50">
-                <AIAssistant />
-            </div>
+            <AIAssistant />
         </div>
     );
 };

@@ -21,10 +21,42 @@ const userSchema = new mongoose.Schema({
         minlength: 6,
         select: false,
     },
+    profilePicture: {
+        type: String,
+        default: '',
+    },
+    mobileNumber: {
+        type: String,
+        default: '',
+    },
+    dateOfBirth: {
+        type: Date,
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other', 'Prefer not to say', ''],
+        default: '',
+    },
+    location: {
+        type: String,
+        default: '',
+    },
+    bio: {
+        type: String,
+        default: '',
+    },
+    twoFactorEnabled: {
+        type: Boolean,
+        default: false,
+    },
     role: {
         type: String,
         enum: ['student', 'teacher'],
         default: 'student',
+    },
+    isOnboarded: {
+        type: Boolean,
+        default: false,
     },
     createdAt: {
         type: Date,

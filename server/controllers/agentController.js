@@ -35,13 +35,13 @@ exports.createPlan = async (req, res, next) => {
 // @access  Private
 exports.chat = async (req, res, next) => {
     try {
-        const { message, isSystem } = req.body;
+        const { message, isSystem, agentId } = req.body;
 
         if (!message) {
             return res.status(400).json({ success: false, error: 'Please provide a message' });
         }
 
-        const aiResponse = await agentService.getChatResponse(message, isSystem);
+        const aiResponse = await agentService.getChatResponse(message, isSystem, agentId);
 
         res.status(200).json({
             success: true,

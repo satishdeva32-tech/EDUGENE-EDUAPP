@@ -77,9 +77,23 @@ exports.updateProfile = async (req, res, next) => {
             { new: true, runValidators: true }
         );
 
+        // Mark user as onboarded
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { isOnboarded: true },
+            { new: true }
+        );
+
         res.status(200).json({
             success: true,
-            data: profile
+            data: profile,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isOnboarded: user.isOnboarded,
+            }
         });
     } catch (err) {
         res.status(400).json({ success: false, error: err.message });
@@ -106,6 +120,7 @@ const sendTokenResponse = (user, statusCode, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            isOnboarded: user.isOnboarded,
         },
     });
 };

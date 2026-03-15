@@ -8,10 +8,16 @@ const studentProfileSchema = new mongoose.Schema({
     },
     goals: [String],
     interests: [String],
+    educationLevel: { type: String, default: '' },
+    institutionName: { type: String, default: '' },
+    fieldOfStudy: { type: String, default: '' },
+    targetExam: { type: String, default: '' },
+    careerGoal: { type: String, default: '' },
+    weeklyStudyHours: { type: Number, default: 10 },
     learningStyle: {
         type: String,
-        enum: ['visual', 'auditory', 'reading', 'kinesthetic'],
-        default: 'reading',
+        enum: ['visual', 'auditory', 'reading', 'kinesthetic', 'logical', 'storytelling', 'practical'],
+        default: 'visual',
     },
     preferredLanguage: {
         type: String,
@@ -33,6 +39,10 @@ const studentProfileSchema = new mongoose.Schema({
             of: Number,
         },
     },
+    performanceData: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Analytics'
+    }
 });
 
 module.exports = mongoose.model('StudentProfile', studentProfileSchema);

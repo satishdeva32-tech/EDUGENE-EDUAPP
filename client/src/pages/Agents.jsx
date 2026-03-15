@@ -1,106 +1,182 @@
 import React from 'react';
-import GlassCard from '../components/GlassCard';
-import { ToggleLeft as Toggle, Sliders, Calendar, FileType, Zap, AlertTriangle, Shield, Cpu, Activity, Bot, ChevronRight } from 'lucide-react';
+import {
+    Bot, Shield, Zap, Brain, MessageSquare, Terminal,
+    Sparkles, Radio, Activity, Code, Cpu, Globe,
+    ChevronRight, Fingerprint
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Agents = () => {
     const agents = [
-        { name: "Study Planner", desc: "Automates your schedule based on learning goals.", icon: Calendar, status: "Active", color: "text-primary-600", bg: "bg-primary-50", tag: "Efficiency" },
-        { name: "Notes Generator", desc: "Converts lectures into high-quality structured notes.", icon: FileType, status: "Active", color: "text-emerald-500", bg: "bg-emerald-50", tag: "Knowledge" },
-        { name: "Revision Bot", desc: "Periodic quizzes and dynamic flashcard generation.", icon: Zap, status: "Standby", color: "text-primary-600", bg: "bg-primary-50", tag: "Retention" },
-        { name: "Focus Mentor", desc: "Ensures focus by blocking distracting content during sessions.", icon: Shield, status: "Off", color: "text-slate-400", bg: "bg-slate-50", tag: "Focus" }
+        {
+            id: 'master',
+            name: 'Master Orchestrator',
+            role: 'Primary Cognitive Engine',
+            desc: 'The brain of EduGenie. Coordinates specialized agents for complex multi-step reasoning and academic deep-dives.',
+            status: 'Optimal',
+            icon: Brain,
+            color: 'text-primary'
+        },
+        {
+            id: 'qa',
+            name: 'Vector Analyst',
+            role: 'Data & Accuracy Node',
+            desc: 'Ensures factual integrity and high-fidelity output. Specializes in technical accuracy and source verification.',
+            status: 'Active',
+            icon: Shield,
+            color: 'text-success'
+        },
+        {
+            id: 'creative',
+            name: 'Synthesizer AI',
+            role: 'Concept Innovation',
+            desc: 'Specializes in creative analogies, simplifying complex topics, and generating novel project ideas.',
+            status: 'Standby',
+            icon: Zap,
+            color: 'text-accent'
+        }
+    ];
+
+    const logs = [
+        { time: 'T-Minus 2s', agent: 'Orchestrator', action: 'Initializing multi-agent handshake', status: 'Success' },
+        { time: 'T-Minus 1s', agent: 'Vector Hub', action: 'Querying academic knowledge graph', status: 'Syncing' },
+        { time: 'Live', agent: 'Neural Link', action: 'Optimal learning path synthesized', status: 'Ready' }
     ];
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-16 max-w-7xl mx-auto px-4 py-8 font-inter pb-20"
         >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                    <h2 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                        Neural <span className="text-primary-600">Agents</span> <Cpu className="text-accent" />
-                    </h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">Autonomous intelligence working for your academic success.</p>
+            {/* Header */}
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-slate-100 pb-16">
+                <div className="space-y-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white border border-slate-100 shadow-premium-sm text-primary text-[10px] font-black uppercase tracking-[0.25em]"
+                    >
+                        <Radio size={14} className="animate-pulse" /> Neural Network Standby
+                    </motion.div>
+                    <h1 className="text-7xl font-black text-slate-900 uppercase tracking-tighter leading-[0.9]">
+                        Agentic <br />
+                        <span className="text-gradient-ai">Core</span>
+                    </h1>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-xs uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-50 transition-all">
-                    <Sliders size={18} /> Global Config
-                </button>
-            </div>
+                <div className="pro-card !p-8 !rounded-[2.5rem] bg-slate-50 border-slate-100 flex items-center gap-8 group">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Nodes</span>
+                        <span className="text-3xl font-black text-slate-900 tracking-tighter leading-none mt-2">12/12</span>
+                    </div>
+                    <div className="w-[1px] h-10 bg-slate-200" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Latency</span>
+                        <span className="text-3xl font-black text-primary tracking-tighter leading-none mt-2">15ms</span>
+                    </div>
+                </div>
+            </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Agent Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {agents.map((agent, index) => (
                     <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        key={agent.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1, duration: 0.6 }}
+                        whileHover={{ y: -15 }}
+                        className="pro-card !p-12 !rounded-[4.5rem] group relative overflow-hidden"
                     >
-                        <div className="pro-card p-8 bg-white dark:bg-slate-900 group hover:border-primary-200">
-                            <div className="flex justify-between items-start mb-6">
-                                <div className={`p-4 rounded-2xl ${agent.bg} ${agent.color} group-hover:scale-105 transition-transform`}>
-                                    <agent.icon size={28} strokeWidth={2.5} />
-                                </div>
-                                <div className="flex flex-col items-end gap-1.5">
-                                    <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${agent.status === 'Active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                        agent.status === 'Standby' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
-                                            'bg-slate-50 text-slate-400 border border-slate-100'
-                                        }`}>
-                                        {agent.status}
-                                    </div>
-                                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{agent.tag}</span>
+                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform duration-[2s] -z-10 text-slate-900">
+                            <Fingerprint size={160} />
+                        </div>
+                        <div className={`w-20 h-20 rounded-[2.5rem] ${agent.color} bg-white shadow-premium-md border-2 border-slate-50 flex items-center justify-center mb-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                            <agent.icon size={36} strokeWidth={1.5} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none">{agent.name}</h3>
+                                <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> {agent.status}
                                 </div>
                             </div>
-
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-primary-600 transition-colors uppercase tracking-tight">{agent.name}</h3>
-                            <p className="text-slate-500 dark:text-slate-400 font-medium text-xs mb-8 leading-relaxed line-clamp-2">{agent.desc}</p>
-
-                            <div className="flex justify-between items-center py-4 border-t border-slate-50 dark:border-slate-800 mt-auto">
-                                <div className="flex items-center gap-2">
-                                    <Activity size={14} className="text-primary-600" />
-                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Auto-pilot</span>
-                                </div>
-                                <button className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${agent.status === 'Active' ? 'bg-primary-600' : 'bg-slate-200 dark:bg-slate-700'}`}>
-                                    <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 ${agent.status === 'Active' ? 'translate-x-6' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
+                            <p className="text-[10px] font-black text-primary uppercase tracking-widest italic">{agent.role}</p>
+                            <p className="text-sm font-bold text-slate-500 leading-relaxed pt-4 border-t border-slate-50">
+                                {agent.desc}
+                            </p>
+                            <button className="w-full h-16 bg-slate-50 border-2 border-white rounded-[1.8rem] text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm mt-8 flex items-center justify-center gap-3">
+                                Test Node <ChevronRight size={14} strokeWidth={3} />
+                            </button>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="pro-card !p-0 border-none shadow-xl shadow-primary-900/10 overflow-hidden">
-                <div className="bg-primary-600 px-8 py-5 flex items-center justify-between">
-                    <h3 className="text-lg font-black text-white flex items-center gap-3">
-                        <Bot size={22} className="text-accent" /> Real-time Reasoning Logs
-                    </h3>
-                    <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-white/20"></div>
-                        <div className="w-2.5 h-2.5 rounded-full bg-white/20"></div>
-                        <div className="w-2.5 h-2.5 rounded-full bg-white/40"></div>
+            {/* System Visualizer Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div className="lg:col-span-2 pro-card !p-12 !rounded-[4.5rem] bg-slate-900 text-white border-none relative overflow-hidden group shadow-[0_40px_80px_-20px_rgba(15,23,42,0.4)]">
+                    <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-125 transition-transform duration-[2s]">
+                        <Terminal size={200} className="text-primary" strokeWidth={0.5} />
+                    </div>
+                    <div className="flex items-center gap-6 mb-12 relative z-10">
+                        <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/10 ring-1 ring-white/20">
+                            <Code size={28} className="text-primary" />
+                        </div>
+                        <h3 className="text-2xl font-black uppercase tracking-tighter">Neural Reasoning Stream</h3>
+                    </div>
+                    <div className="space-y-6 relative z-10 font-mono">
+                        {logs.map((log, i) => (
+                            <div key={i} className="flex items-center gap-8 py-4 border-b border-white/5 last:border-none group/log cursor-pointer hover:bg-white/5 px-4 rounded-xl transition-colors">
+                                <span className="text-[10px] text-primary/60 w-20">{log.time}</span>
+                                <span className="text-[10px] text-white/40 uppercase tracking-widest w-24">[{log.agent}]</span>
+                                <span className="text-sm text-slate-100 flex-1">{log.action}</span>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${log.status === 'Success' ? 'bg-success/10 border-success/20 text-success' : 'bg-primary/10 border-primary/20 text-primary'}`}>
+                                    {log.status}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-12 pt-12 border-t border-white/5 relative z-10 grid grid-cols-3 gap-8">
+                        <div className="space-y-2">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest italic">Global Mastery</p>
+                            <p className="text-2xl font-black tracking-tighter text-white">4.5k nodes</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest italic">Synapse Count</p>
+                            <p className="text-2xl font-black tracking-tighter text-white">82% Sync</p>
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest italic">Node Reliability</p>
+                            <p className="text-2xl font-black tracking-tighter text-success">99.8%</p>
+                        </div>
                     </div>
                 </div>
-                <div className="p-8 bg-slate-900 dark:bg-black font-mono text-[11px] space-y-4 leading-relaxed">
-                    <div className="flex gap-4">
-                        <span className="text-primary-400 font-black shrink-0">[20:49:01]</span>
-                        <p className="grow text-slate-300"><span className="text-emerald-400 font-bold uppercase tracking-tighter">Planner:</span> Impending <span className="text-primary-300 font-black">"React Hooks Exam"</span> in 5 days.</p>
+
+                <div className="pro-card !p-12 !rounded-[4.5rem] space-y-12 flex flex-col justify-between group">
+                    <div className="space-y-10">
+                        <div className="flex items-center gap-6">
+                            <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center border-2 border-white shadow-premium-md group-hover:rotate-12 transition-transform">
+                                <Globe size={28} />
+                            </div>
+                            <h4 className="text-xl font-black uppercase tracking-tighter italic">Global Mesh</h4>
+                        </div>
+                        <p className="text-sm font-bold text-slate-500 leading-relaxed border-l-4 border-primary pl-6">
+                            Agentic nodes are distributed across cross-continental knowledge clusters for maximized synthesis velocity.
+                        </p>
                     </div>
-                    <div className="flex gap-4">
-                        <span className="text-primary-400 font-black shrink-0">[20:49:03]</span>
-                        <p className="grow text-slate-400"><span className="text-primary-300 font-bold uppercase tracking-tighter">Heuristic:</span> Recommendations: prioritize <span className="text-white bg-white/10 px-1.5 py-0.5 rounded">Context API</span> and <span className="text-white bg-white/10 px-1.5 py-0.5 rounded">Custom Hooks</span>.</p>
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 px-2">
+                            <span>Network Load</span>
+                            <span className="text-primary">42%</span>
+                        </div>
+                        <div className="progress-bar-container">
+                            <motion.div initial={{ width: 0 }} animate={{ width: '42%' }} className="progress-bar-fill" />
+                        </div>
                     </div>
-                    <div className="flex gap-4">
-                        <span className="text-primary-400 font-black shrink-0">[20:49:05]</span>
-                        <p className="grow text-slate-300"><span className="text-accent font-bold uppercase tracking-tighter">Action:</span> Flashcards generated. Session scheduled: <span className="text-white font-bold">Today 18:00</span>.</p>
-                    </div>
-                    <motion.p
-                        animate={{ opacity: [0.4, 1, 0.4] }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                        className="text-primary-600 font-black ml-10"
-                    >
-                        &gt; Synthesizing next neural layer...
-                    </motion.p>
+                    <button className="btn-premium w-full text-center">Re-Calibrate</button>
                 </div>
             </div>
         </motion.div>
